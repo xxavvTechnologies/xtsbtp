@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - FirstLook Beta Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">FirstLook</div>
+            <div class="user-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ri-sun-line"></i>
+                </button>
+                <div class="account-trigger">
+                    <div class="account-avatar" id="userAvatar"></div>
+                    <span id="userEmail"></span>
+                    <i class="ri-arrow-down-s-line"></i>
+                    <div class="account-dropdown">
+                        <a href="account.html" class="dropdown-item">
+                            <i class="ri-user-line"></i>
+                            Account Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutBtn">
+                            <i class="ri-logout-box-line"></i>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="app-navigation">
+        <div class="nav-items">
+            <a href="dashboard.html" class="nav-item">
+                <i class="ri-dashboard-line"></i>
+                Dashboard
+            </a>
+            <a href="account.html" class="nav-item active">
+                <i class="ri-user-line"></i>
+                Account
+            </a>
+            <a href="chat.html" class="nav-item">
+                <i class="ri-chat-3-line"></i>
+                Messages
+            </a>
+            <a href="feedback.html" class="nav-item">
+                <i class="ri-feedback-line"></i>
+                Submit Feedback
+            </a>
+            <a href="admin.html" class="nav-item" id="adminLink">
+                <i class="ri-settings-4-line"></i>
+                Admin Panel
+            </a>
+        </div>
+    </nav>
+
+    <main class="account-page">
+        <section class="account-section">
+            <h2>Account Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" id="accountEmail"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Account Type</span>
+                    <span class="info-value" id="accountType"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value" id="memberSince"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="account-section">
+            <h2>Program Participation</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Active Programs</span>
+                    <span class="info-value" id="activePrograms">0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Completed Programs</span>
+                    <span class="info-value" id="completedPrograms">0</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/account.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>

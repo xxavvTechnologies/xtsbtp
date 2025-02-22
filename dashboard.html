@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FirstLook Beta Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">FirstLook</div>
+            <div class="user-controls">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="ri-sun-line"></i>
+                </button>
+                <div class="account-trigger">
+                    <div class="account-avatar" id="userAvatar"></div>
+                    <span id="userEmail"></span>
+                    <i class="ri-arrow-down-s-line"></i>
+                    <div class="account-dropdown">
+                        <a href="account.html" class="dropdown-item">
+                            <i class="ri-user-line"></i>
+                            Account Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logoutBtn">
+                            <i class="ri-logout-box-line"></i>
+                            Sign Out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="app-navigation">
+        <div class="nav-items">
+            <a href="dashboard.html" class="nav-item active">
+                <i class="ri-dashboard-line"></i>
+                Dashboard
+            </a>
+            <a href="account.html" class="nav-item">
+                <i class="ri-user-line"></i>
+                Account
+            </a>
+            <a href="chat.html" class="nav-item">
+                <i class="ri-chat-3-line"></i>
+                Messages
+            </a>
+            <a href="feedback.html" class="nav-item">
+                <i class="ri-feedback-line"></i>
+                Submit Feedback
+            </a>
+            <a href="admin.html" class="nav-item" id="adminLink">
+                <i class="ri-settings-4-line"></i>
+                Admin Panel
+            </a>
+        </div>
+    </nav>
+
+    <div class="dashboard-header">
+        <h1>Available Sandboxes</h1>
+    </div>
+
+    <main>
+        <section id="sandboxes" class="sandbox-grid">
+            <!-- Sandboxes will be loaded here dynamically -->
+        </section>
+        <div id="sandboxTemplate" style="display: none;">
+            <div class="sandbox-card">
+                <div class="card-header">
+                    <h3>{name}</h3>
+                    <span class="status-badge {status}">{status}</span>
+                </div>
+                <div class="card-content">
+                    <p class="description">{description}</p>
+                    <div class="card-footer">
+                        <div class="participants">
+                            <i class="ri-user-line"></i>
+                            <span>{participants}/{maxParticipants}</span>
+                        </div>
+                        <button class="enroll-button" onclick="enrollInSandbox('{id}')" 
+                            {disabled}>{buttonText}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy;2025 xxavvTechnologies. All rights reserved.</p>
+    </footer>
+
+    <div class="lightbox" id="sandboxLightbox">
+        <div class="lightbox-content">
+            <div class="lightbox-header">
+                <h2 id="lightboxTitle"></h2>
+                <button class="close-lightbox" id="closeLightbox">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="lightbox-body">
+                <p id="lightboxDescription"></p>
+            </div>
+            <div class="lightbox-footer">
+                <div class="participants">
+                    <i class="ri-user-line"></i>
+                    <span id="lightboxParticipants"></span>
+                </div>
+                <button id="lightboxEnrollBtn" class="enroll-button"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+    <script src="js/theme.js"></script>
+</body>
+</html>
