@@ -3,15 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account - FirstLook Beta Platform</title>
+    <title>Account - FirstLook</title>
+    <link rel="icon" type="image/x-icon" href="https://d2zcpib8duehag.cloudfront.net/FirstLook.png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
 </head>
 <body>
     <header>
         <nav>
-            <div class="logo">FirstLook</div>
-            <div class="user-controls">
+            <div class="nav-brand">
+                <div class="logo">FirstLook</div>
+            </div>
+            
+            <div class="nav-items">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="account.html" class="nav-item">
+                    <i class="ri-user-line"></i>
+                    Account
+                </a>
+                <a href="chat.html" class="nav-item">
+                    <i class="ri-chat-3-line"></i>
+                    Messages
+                </a>
+                <a href="feedback.html" class="nav-item">
+                    <i class="ri-feedback-line"></i>
+                    Submit Feedback
+                </a>
+                <a href="admin.html" class="nav-item" id="adminLink">
+                    <i class="ri-settings-4-line"></i>
+                    Admin Panel
+                </a>
+            </div>
+
+            <div class="nav-end">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="ri-sun-line"></i>
                 </button>
@@ -35,31 +62,6 @@
         </nav>
     </header>
 
-    <nav class="app-navigation">
-        <div class="nav-items">
-            <a href="dashboard.html" class="nav-item">
-                <i class="ri-dashboard-line"></i>
-                Dashboard
-            </a>
-            <a href="account.html" class="nav-item active">
-                <i class="ri-user-line"></i>
-                Account
-            </a>
-            <a href="chat.html" class="nav-item">
-                <i class="ri-chat-3-line"></i>
-                Messages
-            </a>
-            <a href="feedback.html" class="nav-item">
-                <i class="ri-feedback-line"></i>
-                Submit Feedback
-            </a>
-            <a href="admin.html" class="nav-item" id="adminLink">
-                <i class="ri-settings-4-line"></i>
-                Admin Panel
-            </a>
-        </div>
-    </nav>
-
     <main class="account-page">
         <section class="account-section">
             <h2>Account Information</h2>
@@ -80,7 +82,25 @@
         </section>
 
         <section class="account-section">
-            <h2>Program Participation</h2>
+            <h2>Terms & Conditions Status</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value" id="termsStatus"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Accepted On</span>
+                    <span class="info-value" id="termsDate"></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Terms Version</span>
+                    <span class="info-value" id="termsVersion"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="account-section">
+            <h2>Program Statistics</h2>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">Active Programs</span>
@@ -90,6 +110,13 @@
                     <span class="info-label">Completed Programs</span>
                     <span class="info-value" id="completedPrograms">0</span>
                 </div>
+            </div>
+        </section>
+
+        <section class="account-section">
+            <h2>Your Enrollments</h2>
+            <div class="enrollments-grid" id="enrollmentsList">
+                <div class="loading-enrollments">Loading enrollments...</div>
             </div>
         </section>
     </main>

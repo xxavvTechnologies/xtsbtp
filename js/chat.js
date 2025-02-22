@@ -20,7 +20,7 @@ let messageListeners = {};
 let messageListener = null;
 
 // Add after existing imports
-let notificationsEnabled = JSON.parse(localStorage.getItem('notifications') || 'false');
+let notificationsEnabled = JSON.parse(localStorage.getItem('notifications') ?? 'true');
 
 // Initialize chat
 auth.onAuthStateChanged(async (user) => {
@@ -145,21 +145,36 @@ messageForm.addEventListener('submit', async (e) => {
 
 // Update the appendMessage function
 function appendMessage(message) {
-    const messageWrapper = document.createElement('div');
-    messageWrapper.className = `message-wrapper ${message.senderId === currentUser.uid ? 'sent' : 'received'}`;
-    
-    const time = new Date(message.timestamp).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    try {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.className = `message-wrapper ${message.senderId === currentUser.uid ? 'sent' : 'received'}`;
+        
+        const time = new Date(message.timestamp).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
 
-    messageWrapper.innerHTML = `
-        <div class="message">${message.text}</div>
-        <span class="message-time">${time}</span>
-    `;
-    
-    messagesContainer.appendChild(messageWrapper);
-    scrollToBottom();
+        messageWrapper.innerHTML = `
+            <div class="message">${message.text}</div>
+            <span class="message-time">${time}</span>
+        `;
+        
+        messagesContainer.appendChild(messageWrapper);
+        scrollToBottom();
+
+        // Send notification if message is received and window is not focused
+        if (message.senderId !== currentUser.uid && 
+            notificationsEnabled && 
+            (!document.hasFocus() || document.hidden)) {
+            notificationManager.notify('New Message', {
+                body: `${message.senderEmail}: ${message.text}`,
+                tag: 'chat-message'
+            });
+        }
+    } catch (error) {
+        console.error('Error appending message:', error);
+        showNotification('Failed to display message. Please refresh the page.');
+    }
 }
 
 // User search
@@ -185,36 +200,34 @@ window.addEventListener('unload', () => {
     }
 });
 
-// Add this function
+// Update the setupNotificationToggle function
 function setupNotificationToggle() {
     const notificationToggle = document.createElement('button');
     notificationToggle.className = 'notification-toggle';
-    notificationToggle.innerHTML = `
-        <i class="ri-notification-${notificationsEnabled ? 'fill' : 'off-line'}"></i>
-        ${notificationsEnabled ? 'Notifications On' : 'Notifications Off'}
-    `;
+    updateNotificationToggleUI(notificationToggle);
     
     notificationToggle.addEventListener('click', async () => {
-        if (!notificationsEnabled) {
+        if (notificationsEnabled) {
+            notificationsEnabled = false;
+            localStorage.setItem('notifications', 'false');
+        } else {
             const granted = await notificationManager.requestPermission();
             if (granted) {
                 notificationsEnabled = true;
                 localStorage.setItem('notifications', 'true');
-                notificationToggle.innerHTML = `
-                    <i class="ri-notification-fill"></i>
-                    Notifications On
-                `;
             }
-        } else {
-            notificationsEnabled = false;
-            localStorage.setItem('notifications', 'false');
-            notificationToggle.innerHTML = `
-                <i class="ri-notification-off-line"></i>
-                Notifications Off
-            `;
         }
+        updateNotificationToggleUI(notificationToggle);
     });
 
     // Add to chat header
     document.querySelector('.chat-header .encryption-badge').before(notificationToggle);
+}
+
+// Add this new helper function
+function updateNotificationToggleUI(button) {
+    button.innerHTML = `
+        <i class="ri-notification-${notificationsEnabled ? 'fill' : 'off-line'}"></i>
+        Notifications ${notificationsEnabled ? 'On' : 'Off'}
+    `;
 }

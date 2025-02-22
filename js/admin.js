@@ -1,5 +1,5 @@
 import { auth, db, rtdb } from './firebase-config.js';
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import { collection, query, where, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { ref, onChildAdded, push, off, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
 // Add these constants at the top
@@ -17,10 +17,12 @@ const adminMessages = document.getElementById('adminMessages');
 const adminMessageForm = document.getElementById('adminMessageForm');
 const adminMessageInput = document.getElementById('adminMessageInput');
 const userSearch = document.getElementById('userSearch');
+const sandboxesContainer = document.getElementById('existingSandboxes');
 
 let currentChatId = null;
 let messageListeners = {};
-const ADMIN_EMAIL = 'super@xts.admin';
+// Add email validation instead of hardcoding
+const ADMIN_EMAILS = ['super@xts.admin', 'admin@xxavvgroup.com']; // Add all authorized admin emails
 
 // Add a cleanup function at the top
 let currentMessageListener = null;
@@ -32,14 +34,19 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
-    if (user.email !== ADMIN_EMAIL) {
+    if (!ADMIN_EMAILS.includes(user.email)) {
         window.location.href = 'dashboard.html';
         return;
     }
 
     // Update admin UI
     if (userEmail) userEmail.textContent = user.email;
-    await loadAllUsers();
+    
+    // Load both users and sandboxes
+    await Promise.all([
+        loadAllUsers(),
+        loadExistingSandboxes()
+    ]);
 });
 
 // Add user data validation helper
@@ -280,6 +287,105 @@ userSearch.addEventListener('input', (e) => {
         const email = item.dataset.email.toLowerCase();
         item.style.display = email.includes(searchTerm) ? 'flex' : 'none';
     });
+});
+
+// Add sort functionality for sandboxes
+document.getElementById('sandboxSortBy').addEventListener('change', function(e) {
+    const sortBy = e.target.value;
+    loadExistingSandboxes(sortBy);
+});
+
+async function loadExistingSandboxes(sortBy = 'name') {
+    const sandboxesContainer = document.getElementById('existingSandboxes');
+    try {
+        let snapshot = await getDocs(collection(db, 'sandboxes'));
+        let sandboxes = [];
+        
+        snapshot.forEach(doc => {
+            sandboxes.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort sandboxes based on selected criteria
+        sandboxes.sort((a, b) => {
+            switch(sortBy) {
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'status':
+                    return a.status.localeCompare(b.status);
+                case 'participants':
+                    return b.participants - a.participants;
+                default:
+                    return 0;
+            }
+        });
+
+        sandboxesContainer.innerHTML = sandboxes.map(sandbox => `
+            <div class="sandbox-card">
+                <div class="card-header">
+                    <h3>${sandbox.name}</h3>
+                    <span class="status-badge ${sandbox.status}">${sandbox.status}</span>
+                </div>
+                <div class="card-content">
+                    <p class="description">${sandbox.description}</p>
+                    <div class="card-footer">
+                        <div class="participants">
+                            <i class="ri-user-line"></i>
+                            <span>${sandbox.participants}/${sandbox.maxParticipants}</span>
+                        </div>
+                        <button class="delete-sandbox" onclick="deleteSandbox('${sandbox.id}')">
+                            <i class="ri-delete-bin-line"></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading sandboxes:', error);
+        sandboxesContainer.innerHTML = '<p>Error loading sandboxes</p>';
+    }
+}
+
+// Make deleteSandbox function accessible globally
+window.deleteSandbox = async (sandboxId) => {
+    if (!confirm('Are you sure you want to delete this sandbox?')) return;
+    
+    try {
+        await deleteDoc(doc(db, 'sandboxes', sandboxId));
+        await loadExistingSandboxes(document.getElementById('sandboxSortBy').value);
+    } catch (error) {
+        console.error('Error deleting sandbox:', error);
+        alert('Failed to delete sandbox');
+    }
+};
+
+// Add sandbox form submission handler
+document.getElementById('addSandboxForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    try {
+        const sandboxData = {
+            name: form.sandboxName.value,
+            description: form.sandboxDescription.value,
+            status: form.sandboxStatus.value,
+            maxParticipants: parseInt(form.maxParticipants.value),
+            participants: 0,
+            createdAt: new Date()
+        };
+
+        await addDoc(collection(db, 'sandboxes'), sandboxData);
+        form.reset();
+        await loadExistingSandboxes(document.getElementById('sandboxSortBy').value);
+    } catch (error) {
+        console.error('Error adding sandbox:', error);
+        alert('Failed to add sandbox');
+    } finally {
+        submitButton.disabled = false;
+    }
 });
 
 // Cleanup

@@ -3,15 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FirstLook Beta Platform</title>
+    <title>Dashboard - FirstLook</title>
+    <link rel="icon" type="image/x-icon" href="https://d2zcpib8duehag.cloudfront.net/FirstLook.png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
 </head>
 <body>
     <header>
         <nav>
-            <div class="logo">FirstLook</div>
-            <div class="user-controls">
+            <div class="nav-brand">
+                <div class="logo">FirstLook</div>
+            </div>
+            
+            <div class="nav-items">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="changelog.html" class="nav-item active">
+                    <i class="ri-git-commit-line"></i>
+                    Changelog
+                </a>
+                <a href="account.html" class="nav-item">
+                    <i class="ri-user-line"></i>
+                    Account
+                </a>
+                <a href="chat.html" class="nav-item">
+                    <i class="ri-chat-3-line"></i>
+                    Messages
+                </a>
+                <a href="feedback.html" class="nav-item">
+                    <i class="ri-feedback-line"></i>
+                    Feedback
+                </a>
+                <a href="admin.html" class="nav-item" id="adminLink">
+                    <i class="ri-settings-4-line"></i>
+                    Admin
+                </a>
+            </div>
+
+            <div class="nav-end">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="ri-sun-line"></i>
                 </button>
@@ -34,31 +65,6 @@
             </div>
         </nav>
     </header>
-
-    <nav class="app-navigation">
-        <div class="nav-items">
-            <a href="dashboard.html" class="nav-item active">
-                <i class="ri-dashboard-line"></i>
-                Dashboard
-            </a>
-            <a href="account.html" class="nav-item">
-                <i class="ri-user-line"></i>
-                Account
-            </a>
-            <a href="chat.html" class="nav-item">
-                <i class="ri-chat-3-line"></i>
-                Messages
-            </a>
-            <a href="feedback.html" class="nav-item">
-                <i class="ri-feedback-line"></i>
-                Submit Feedback
-            </a>
-            <a href="admin.html" class="nav-item" id="adminLink">
-                <i class="ri-settings-4-line"></i>
-                Admin Panel
-            </a>
-        </div>
-    </nav>
 
     <div class="dashboard-header">
         <h1>Available Sandboxes</h1>
@@ -110,6 +116,44 @@
                     <span id="lightboxParticipants"></span>
                 </div>
                 <button id="lightboxEnrollBtn" class="enroll-button"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-lightbox" id="notificationLightbox">
+        <div class="notification-content">
+            <div class="notification-header">
+                <h2><i class="ri-checkbox-circle-line"></i> Success!</h2>
+                <button class="close-notification" id="closeNotification">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+            <div class="notification-body">
+                <p id="notificationMessage"></p>
+            </div>
+            <div class="notification-footer">
+                <button class="primary-button" id="notificationOkBtn">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="terms-modal" id="termsModal">
+        <div class="terms-content">
+            <div class="terms-header">
+                <h2>Beta Tester Program Terms & Conditions</h2>
+            </div>
+            <div class="terms-body">
+                <div class="terms-scroll" id="termsContent">
+                    <!-- Terms will be loaded here dynamically -->
+                    <p>Loading terms...</p>
+                </div>
+            </div>
+            <div class="terms-footer">
+                <label class="terms-checkbox">
+                    <input type="checkbox" id="termsCheckbox">
+                    <span>I have read and agree to the Terms & Conditions</span>
+                </label>
+                <button class="primary-button" id="acceptTermsBtn" disabled>Accept & Continue</button>
             </div>
         </div>
     </div>
