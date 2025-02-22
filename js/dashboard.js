@@ -43,6 +43,9 @@ const acceptTermsBtn = document.getElementById('acceptTermsBtn');
 // Add at the top with other DOM elements
 const termsContent = document.getElementById('termsContent');
 
+// Add at the top with other global variables
+let userDocRef = null;
+
 // Auth check
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
@@ -50,13 +53,15 @@ auth.onAuthStateChanged(async (user) => {
         return;
     }
 
+    // Set userDocRef when user is authenticated
+    userDocRef = doc(db, 'users', user.uid);
+
     // Update user info in header
     const initials = user.email.substring(0, 2).toUpperCase();
     userAvatar.textContent = initials;
     userEmail.textContent = user.email;
 
     // Check admin status
-    const userDocRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userDocRef);
     if (!userSnap.data()?.isAdmin) {
         adminLink.style.display = 'none';
@@ -260,19 +265,24 @@ logoutBtn.addEventListener('click', async () => {
 
 // Add this function with the other functions
 async function checkAndShowTerms(user) {
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDoc = await getDoc(userDocRef);
-    const userData = userDoc.data();
+    try {
+        const userDoc = await getDoc(userDocRef);
+        const userData = userDoc.data();
 
-    if (!userData?.agreedToTerms) {
-        await loadTermsContent();
-        termsModal.classList.add('active');
-        
-        // Handle checkbox change
-        termsCheckbox.addEventListener('change', handleTermsChange);
-
-        // Handle terms acceptance
-        acceptTermsBtn.addEventListener('click', handleTermsAccept);
+        if (!userData?.agreedToTerms) {
+            await loadTermsContent();
+            termsModal.classList.add('active');
+            
+            // Remove any existing event listeners to prevent duplicates
+            termsCheckbox?.removeEventListener('change', handleTermsChange);
+            acceptTermsBtn?.removeEventListener('click', handleTermsAccept);
+            
+            // Add event listeners
+            termsCheckbox?.addEventListener('change', handleTermsChange);
+            acceptTermsBtn?.addEventListener('click', handleTermsAccept);
+        }
+    } catch (error) {
+        console.error('Error checking terms acceptance:', error);
     }
 }
 
@@ -374,14 +384,23 @@ function handleTermsChange() {
     acceptTermsBtn.disabled = !termsCheckbox.checked;
 }
 
-function handleTermsAccept() {
-    if (termsCheckbox.checked) {
-        updateDoc(userDocRef, {
+// Update the terms acceptance handler
+async function handleTermsAccept() {
+    if (!termsCheckbox.checked || !userDocRef) {
+        return;
+    }
+
+    try {
+        await updateDoc(userDocRef, {
             agreedToTerms: true,
             termsAcceptedAt: new Date(),
-            termsVersion: '1.0' // Add version tracking
+            termsVersion: '1.0'
         });
         termsModal.classList.remove('active');
+        showNotification('Terms & Conditions accepted successfully!');
+    } catch (error) {
+        console.error('Error updating terms acceptance:', error);
+        showNotification('Failed to update terms acceptance. Please try again.');
     }
 }
 
