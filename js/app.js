@@ -44,6 +44,18 @@ auth.onAuthStateChanged(async (user) => {
             adminPanel.classList.remove('hidden');
         }
 
+        // Show/hide admin nav item
+        const adminNavItem = `
+            <a href="admin.html" class="mobile-nav-item">
+                <i class="ri-settings-4-line"></i>
+                <span>Admin</span>
+            </a>
+        `;
+        
+        if (isAdmin) {
+            document.querySelector('.mobile-nav-items').insertAdjacentHTML('beforeend', adminNavItem);
+        }
+
         loadSandboxes();
     } else {
         loginSection.classList.remove('hidden');
@@ -137,6 +149,24 @@ async function enrollInSandbox(sandboxId) {
         alert(`Failed to enroll: ${error.message}`);
     }
 }
+
+// Add this function to your existing app.js
+function setActiveMobileNavItem() {
+    const currentPath = window.location.pathname;
+    const pageName = currentPath.split('/').pop().split('.')[0];
+    
+    document.querySelectorAll('.mobile-nav-item').forEach(item => {
+        const itemPath = item.getAttribute('href').split('/').pop().split('.')[0];
+        if (itemPath === pageName) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', setActiveMobileNavItem);
 
 // Logout
 logoutBtn.addEventListener('click', () => auth.signOut());

@@ -93,56 +93,115 @@ forgotPassword.addEventListener('click', (e) => {
 });
 
 function getErrorMessage(errorCode) {
-    switch (errorCode) {
-        case 'auth/wrong-password':
-            return 'Incorrect password. Please try again.';
-        case 'auth/user-not-found':
-            return 'No account found with this email.';
-        case 'auth/too-many-requests':
-            return 'Too many failed attempts. Please try again later.';
-        default:
-            return 'An error occurred. Please try again.';
-    }
+    const errors = {
+        'auth/invalid-login-credentials': {
+            title: 'Invalid Login',
+            message: 'The email or password you entered is incorrect. Please try again.',
+            icon: 'ri-lock-line'
+        },
+        'auth/user-not-found': {
+            title: 'Account Not Found',
+            message: 'No account exists with this email address. Please check for typos or sign up.',
+            icon: 'ri-mail-line'
+        },
+        'auth/invalid-email': {
+            title: 'Invalid Email',
+            message: 'Please enter a valid email address (e.g., user@example.com).',
+            icon: 'ri-mail-line'
+        },
+        'auth/email-already-in-use': {
+            title: 'Email In Use',
+            message: 'This email is already registered. Please try logging in instead.',
+            icon: 'ri-mail-line'
+        },
+        'auth/weak-password': {
+            title: 'Weak Password',
+            message: 'Password must be at least 6 characters long.',
+            icon: 'ri-lock-line'
+        },
+        'default': {
+            title: 'Error',
+            message: 'Something went wrong. Please try again.',
+            icon: 'ri-error-warning-line'
+        }
+    };
+    return errors[errorCode] || errors['default'];
 }
 
-function showError(message) {
-    // Remove any existing error messages
-    const existingError = document.querySelector('.login-error');
-    if (existingError) existingError.remove();
-
-    // Create and insert error message
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'login-error';
-    errorDiv.innerHTML = `
-        <i class="ri-error-warning-line"></i>
-        <span>${message}</span>
-    `;
+function showError(error) {
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
     
-    loginForm.insertBefore(errorDiv, loginBtn);
+    const errorInfo = typeof error === 'string' 
+        ? { title: 'Error', message: error, icon: 'ri-error-warning-line' }
+        : getErrorMessage(error.code);
 
-    // Auto-remove after 5 seconds
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="${errorInfo.icon}"></i>
+            <div class="notification-text">
+                <strong>${errorInfo.title}</strong>
+                <p>${errorInfo.message}</p>
+            </div>
+            <button class="notification-close">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+    `;
+
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    document.body.appendChild(notification);
+
+    // Add close button handler
+    notification.querySelector('.notification-close').onclick = () => {
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 300);
+    };
+
+    // Auto remove after 5 seconds
     setTimeout(() => {
-        errorDiv.remove();
+        if (notification.isConnected) {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 300);
+        }
     }, 5000);
 }
 
 function showNotification(message) {
-    // Remove any existing notifications
-    const existingNotification = document.querySelector('.login-notification');
-    if (existingNotification) existingNotification.remove();
-
-    // Create and insert notification message
-    const notificationDiv = document.createElement('div');
-    notificationDiv.className = 'login-notification';
-    notificationDiv.innerHTML = `
-        <i class="ri-notification-line"></i>
-        <span>${message}</span>
-    `;
+    const notification = document.createElement('div');
+    notification.className = 'notification info';
     
-    loginForm.insertBefore(notificationDiv, loginBtn);
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="ri-information-line"></i>
+            <div class="notification-text">
+                <strong>Notice</strong>
+                <p>${message}</p>
+            </div>
+            <button class="notification-close">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+    `;
 
-    // Auto-remove after 5 seconds
+    // Remove existing notifications
+    document.querySelectorAll('.notification').forEach(n => n.remove());
+    
+    document.body.appendChild(notification);
+
+    // Add close button handler
+    notification.querySelector('.notification-close').onclick = () => {
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 300);
+    };
+
+    // Auto remove after 5 seconds
     setTimeout(() => {
-        notificationDiv.remove();
+        if (notification.isConnected) {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 300);
+        }
     }, 5000);
 }

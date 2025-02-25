@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Dashboard - FirstLook</title>
     <link rel="icon" type="image/x-icon" href="https://d2zcpib8duehag.cloudfront.net/FirstLook.png">
     <link rel="stylesheet" href="css/styles.css">
@@ -72,6 +72,29 @@
 
     <main>
         <section id="sandboxes" class="sandbox-grid">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-skeleton">
+                <!-- Loading placeholders will be inserted here -->
+            </div>
+            
+            <!-- Error State -->
+            <div id="errorState" class="error-state hidden">
+                <i class="ri-error-warning-line"></i>
+                <h3>Something went wrong</h3>
+                <p>Unable to load sandboxes. Please try again later.</p>
+                <button class="button" onclick="location.reload()">
+                    <i class="ri-refresh-line"></i>
+                    Retry
+                </button>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="error-state hidden">
+                <i class="ri-inbox-line"></i>
+                <h3>No Sandboxes Available</h3>
+                <p>Check back later for new opportunities!</p>
+            </div>
+
             <!-- Sandboxes will be loaded here dynamically -->
         </section>
         <div id="sandboxTemplate" style="display: none;">
@@ -99,7 +122,7 @@
         <p>&copy;2025 xxavvTechnologies. All rights reserved.</p>
     </footer>
 
-    <div class="lightbox" id="sandboxLightbox">
+    <div class="lightbox" id="sandboxLightbox" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
         <div class="lightbox-content">
             <div class="lightbox-header">
                 <h2 id="lightboxTitle"></h2>
@@ -120,7 +143,7 @@
         </div>
     </div>
 
-    <div class="notification-lightbox" id="notificationLightbox">
+    <div class="notification-lightbox" id="notificationLightbox" role="dialog" aria-modal="true">
         <div class="notification-content">
             <div class="notification-header">
                 <h2><i class="ri-checkbox-circle-line"></i> Success!</h2>
@@ -137,7 +160,7 @@
         </div>
     </div>
 
-    <div class="terms-modal" id="termsModal">
+    <div class="terms-modal" id="termsModal" role="dialog" aria-modal="true">
         <div class="terms-content">
             <div class="terms-header">
                 <h2>Beta Tester Program Terms & Conditions</h2>
@@ -157,6 +180,31 @@
             </div>
         </div>
     </div>
+
+    <nav class="mobile-nav" aria-label="Mobile navigation">
+        <div class="mobile-nav-items">
+            <a href="dashboard.html" class="mobile-nav-item active" aria-current="page">
+                <i class="ri-dashboard-line" aria-hidden="true"></i>
+                <span>Home</span>
+            </a>
+            <a href="changelog.html" class="mobile-nav-item ${currentPage === 'changelog' ? 'active' : ''}">
+                <i class="ri-git-commit-line"></i>
+                <span>Updates</span>
+            </a>
+            <a href="chat.html" class="mobile-nav-item ${currentPage === 'chat' ? 'active' : ''}">
+                <i class="ri-chat-3-line"></i>
+                <span>Chat</span>
+            </a>
+            <a href="feedback.html" class="mobile-nav-item ${currentPage === 'feedback' ? 'active' : ''}">
+                <i class="ri-feedback-line"></i>
+                <span>Feedback</span>
+            </a>
+            <a href="account.html" class="mobile-nav-item ${currentPage === 'account' ? 'active' : ''}">
+                <i class="ri-user-line"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
 
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/dashboard.js"></script>

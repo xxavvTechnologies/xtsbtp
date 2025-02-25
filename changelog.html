@@ -40,12 +40,49 @@
             <p>Track all updates and improvements to the FirstLook Beta Platform</p>
         </div>
 
+        <div class="version-block">
+            <div class="version-header">
+                <h2>Version 1.1.0</h2>
+                <span class="version-date">February 24, 2025</span>
+                <span class="version-badge">Latest</span>
+            </div>
+        
+            <div class="feature-section">
+                <h3>📱 Mobile Experience</h3>
+                <ul>
+                    <li>Added new bottom navigation bar for mobile devices</li>
+                    <li>Improved mobile responsive layouts</li>
+                    <li>Enhanced touch targets for better mobile interaction</li>
+                    <li>Added safe area support for notched devices</li>
+                </ul>
+            </div>
+        
+            <div class="feature-section">
+                <h3>🔔 Notifications</h3>
+                <ul>
+                    <li>Redesigned notification system with improved visibility</li>
+                    <li>Added more detailed error messages</li>
+                    <li>Enhanced notification animations and transitions</li>
+                    <li>Improved notification positioning for mobile devices</li>
+                </ul>
+            </div>
+        
+            <div class="feature-section">
+                <h3>🛠 Technical Improvements</h3>
+                <ul>
+                    <li>Enhanced enrollment system reliability</li>
+                    <li>Improved mobile-first CSS architecture</li>
+                    <li>Added better error handling for authentication</li>
+                    <li>Optimized layout performance on mobile devices</li>
+                </ul>
+            </div>
+        </div>
+
         <div class="changelog-content">
             <div class="version-block">
                 <div class="version-header">
                     <h2>Version 1.0.0</h2>
                     <span class="version-date">February 22, 2025</span>
-                    <span class="version-badge">Latest</span>
                 </div>
 
                 <div class="feature-section">
@@ -109,6 +146,31 @@
     <footer>
         <p>&copy; 2025 xxavvTechnologies. All rights reserved.</p>
     </footer>
+
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="dashboard.html" class="mobile-nav-item ${currentPage === 'dashboard' ? 'active' : ''}">
+                <i class="ri-dashboard-line"></i>
+                <span>Home</span>
+            </a>
+            <a href="changelog.html" class="mobile-nav-item ${currentPage === 'changelog' ? 'active' : ''}">
+                <i class="ri-git-commit-line"></i>
+                <span>Updates</span>
+            </a>
+            <a href="chat.html" class="mobile-nav-item ${currentPage === 'chat' ? 'active' : ''}">
+                <i class="ri-chat-3-line"></i>
+                <span>Chat</span>
+            </a>
+            <a href="feedback.html" class="mobile-nav-item ${currentPage === 'feedback' ? 'active' : ''}">
+                <i class="ri-feedback-line"></i>
+                <span>Feedback</span>
+            </a>
+            <a href="account.html" class="mobile-nav-item ${currentPage === 'account' ? 'active' : ''}">
+                <i class="ri-user-line"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
 
     <script src="js/theme.js"></script>
 </body>

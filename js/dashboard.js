@@ -1,4 +1,8 @@
-import { auth, db } from './firebase-config.js';
+// Update the imports at the top of the file
+import { 
+    auth, 
+    db 
+} from './firebase-config.js';
 import { 
     collection, 
     getDocs, 
@@ -8,7 +12,9 @@ import {
     updateDoc, 
     increment,
     query,
-    where 
+    where,
+    setDoc,           // Add this
+    serverTimestamp   // Add this
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 import { signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -122,42 +128,40 @@ window.showSandboxDetails = async function(sandboxId) {
     sandboxLightbox.classList.add('active');
 }
 
-window.enrollInSandbox = async function(sandboxId) {
+async function enrollInSandbox(sandboxId) {
     try {
         const user = auth.currentUser;
         if (!user) {
-            alert('Please log in to enroll.');
+            showNotification('Please log in to enroll.');
             return;
         }
 
+        // Create a composite ID for the enrollment
+        const enrollmentId = `${user.uid}_${sandboxId}`;
+        
+        // Get sandbox data first
         const sandboxRef = doc(db, 'sandboxes', sandboxId);
         const sandboxSnap = await getDoc(sandboxRef);
+        
+        if (!sandboxSnap.exists()) {
+            showNotification('Sandbox not found.');
+            return;
+        }
+
         const sandboxData = sandboxSnap.data();
-
+        
         if (sandboxData.participants >= sandboxData.maxParticipants) {
-            alert('Sorry, this sandbox is full.');
+            showNotification('Sorry, this sandbox is full.');
             return;
         }
 
-        // Check if user is already enrolled
-        const enrollmentsRef = collection(db, 'enrollments');
-        const q = query(enrollmentsRef, 
-            where('userId', '==', user.uid),
-            where('sandboxId', '==', sandboxId)
-        );
-        const enrollmentSnap = await getDocs(q);
-
-        if (!enrollmentSnap.empty) {
-            alert('You are already enrolled in this sandbox.');
-            return;
-        }
-
-        // Create enrollment
-        await addDoc(collection(db, 'enrollments'), {
+        // Create enrollment with the composite ID
+        await setDoc(doc(db, 'enrollments', enrollmentId), {
             userId: user.uid,
             sandboxId: sandboxId,
-            enrolledAt: new Date(),
-            userEmail: user.email
+            enrolledAt: serverTimestamp(),
+            userEmail: user.email,
+            status: 'pending'
         });
 
         // Update sandbox participants count
@@ -165,27 +169,23 @@ window.enrollInSandbox = async function(sandboxId) {
             participants: increment(1)
         });
 
-        const successMessage = `You have been enrolled in the sandbox. You should receive access details within 24 hours through one of these channels:
-
-• Email
-• In-app message
-• Text message (if provided)
-
-Please make sure to check your spam folder if you don't see the email.`;
-
+        const successMessage = `Successfully enrolled! You'll receive access details within 24 hours.`;
         showNotification(successMessage);
-        loadSandboxes(); // Refresh the display
         
-        // Close sandbox lightbox if it's open
-        if (sandboxLightbox.classList.contains('active')) {
+        // Refresh display
+        await loadSandboxes();
+        
+        // Close lightbox if open
+        const sandboxLightbox = document.querySelector('.lightbox');
+        if (sandboxLightbox?.classList.contains('active')) {
             sandboxLightbox.classList.remove('active');
         }
 
     } catch (error) {
-        console.error('Error enrolling:', error);
+        console.error('Enrollment error:', error);
         showNotification('Failed to enroll. Please try again.');
     }
-};
+}
 
 // Add event listeners for lightbox
 closeLightbox.addEventListener('click', () => {

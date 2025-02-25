@@ -121,6 +121,31 @@
         </section>
     </main>
 
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a href="dashboard.html" class="mobile-nav-item ${currentPage === 'dashboard' ? 'active' : ''}">
+                <i class="ri-dashboard-line"></i>
+                <span>Home</span>
+            </a>
+            <a href="changelog.html" class="mobile-nav-item ${currentPage === 'changelog' ? 'active' : ''}">
+                <i class="ri-git-commit-line"></i>
+                <span>Updates</span>
+            </a>
+            <a href="chat.html" class="mobile-nav-item ${currentPage === 'chat' ? 'active' : ''}">
+                <i class="ri-chat-3-line"></i>
+                <span>Chat</span>
+            </a>
+            <a href="feedback.html" class="mobile-nav-item ${currentPage === 'feedback' ? 'active' : ''}">
+                <i class="ri-feedback-line"></i>
+                <span>Feedback</span>
+            </a>
+            <a href="account.html" class="mobile-nav-item ${currentPage === 'account' ? 'active' : ''}">
+                <i class="ri-user-line"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+    </nav>
+
     <script type="module" src="js/firebase-config.js"></script>
     <script type="module" src="js/account.js"></script>
     <script src="js/theme.js"></script>
