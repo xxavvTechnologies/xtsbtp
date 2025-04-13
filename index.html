@@ -1,171 +1,52 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FirstLook</title>
-    <link rel="icon" type="image/x-icon" href="https://d2zcpib8duehag.cloudfront.net/FirstLook.png">
+    <title>FirstLook - Beta Testing Platform by xxavvTechnologies</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
 </head>
 <body>
-    <div class="login-page">
-        <div class="login-container">
-            <div class="login-brand">
-                <img src="https://d2zcpib8duehag.cloudfront.net/FirstLook.png" alt="FirstLook Logo" class="login-logo">
-                <h1>FirstLook</h1>
-            </div>
-            
-            <div class="login-content">
-                <div class="login-header">
-                    <h2>Welcome Back</h2>
-                    <p>Sign in to continue to your dashboard</p>
-                </div>
-
-                <form id="loginForm" class="login-form">
-                    <div class="input-group">
-                        <i class="ri-mail-line"></i>
-                        <input type="email" id="email" placeholder="Email address" required>
-                    </div>
-                    
-                    <div class="input-group">
-                        <i class="ri-lock-line"></i>
-                        <input type="password" id="password" placeholder="Password" required>
-                        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-                            <i class="ri-eye-line"></i>
-                        </button>
-                    </div>
-
-                    <div class="form-options">
-                        <label class="remember-me">
-                            <input type="checkbox" id="rememberMe" checked>
-                            <span>Remember me</span>
-                            <i class="ri-information-line" title="Recommended unless using a public computer"></i>
-                        </label>
-                        <button type="button" class="forgot-password" id="forgotPassword">
-                            Forgot password?
-                        </button>
-                    </div>
-
-                    <button type="submit" class="login-btn">
-                        <span>Sign In</span>
-                        <div class="loader"></div>
-                    </button>
-                </form>
-            </div>
-
-            <div class="login-footer">
-                <div class="theme-controls">
-                    <button class="theme-toggle" id="themeToggle">
-                        <i class="ri-sun-line"></i>
-                        <span>Switch theme</span>
-                    </button>
-                </div>
-                <p>&copy; 2025 xxavvTechnologies. All rights reserved.</p>
-            </div>
+    <nav>
+        <div class="container">
+            <h2>FirstLook</h2>
         </div>
+    </nav>
 
-        <div class="login-showcase">
-            <div class="showcase-content">
-                <h2>Welcome to FirstLook Beta Program</h2>
-                <p>Experience the future of our products before anyone else.</p>
-                <div class="showcase-features">
-                    <div class="feature-item">
-                        <i class="ri-rocket-line"></i>
-                        <span>Early Access to Features</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="ri-feedback-line"></i>
-                        <span>Direct Feedback Channel</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="ri-team-line"></i>
-                        <span>Exclusive Community</span>
-                    </div>
+    <section class="hero">
+        <div class="container">
+            <h1>FirstLook</h1>
+            <p>xxavvTechnologies' Private Beta Testing Platform</p>
+            <p class="subtitle">Access by invitation only</p>
+            <a href="login.html" class="btn">Sign In</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Exclusive Beta Testing Environment</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <h3>Private Access</h3>
+                    <p>Strictly invitation-only beta testing program</p>
+                </div>
+                <div class="feature">
+                    <h3>Direct Feedback</h3>
+                    <p>Provide feedback directly to development teams</p>
+                </div>
+                <div class="feature">
+                    <h3>Exclusive Rewards</h3>
+                    <p>Earn rewards for your valuable contributions</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Add Password Recovery Info Lightbox -->
-    <div class="recovery-lightbox" id="recoveryLightbox">
-        <div class="recovery-content">
-            <div class="recovery-header">
-                <h3>
-                    <i class="ri-lock-password-line"></i>
-                    Password Recovery
-                </h3>
-                <button class="close-recovery" id="closeRecovery">
-                    <i class="ri-close-line"></i>
-                </button>
-            </div>
-            <div class="recovery-body">
-                <p>To recover access to your account, please contact the xTS-BT Team through one of these channels:</p>
-                <div class="contact-options">
-                    <a href="mailto:beta.xts@xxavvgroup.com" class="contact-option">
-                        <i class="ri-mail-line"></i>
-                        <span>support@xts.bt</span>
-                    </a>
-                </div>
-                <div class="recovery-note">
-                    <i class="ri-information-line"></i>
-                    <p>Please include your account email in your request to expedite the recovery process.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="js/firebase-config.js"></script>
-    <script type="module" src="js/login.js"></script>
-    <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        const icon = themeToggle.querySelector('i');
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            icon.className = newTheme === 'light' ? 'ri-sun-line' : 'ri-moon-line';
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Set initial theme
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', savedTheme);
-        icon.className = savedTheme === 'light' ? 'ri-sun-line' : 'ri-moon-line';
-
-        // Password visibility toggle
-        const passwordToggle = document.querySelector('.password-toggle');
-        const passwordInput = document.getElementById('password');
-
-        passwordToggle.addEventListener('click', () => {
-            const type = passwordInput.type === 'password' ? 'text' : 'password';
-            passwordInput.type = type;
-            passwordToggle.querySelector('i').className = 
-                type === 'password' ? 'ri-eye-line' : 'ri-eye-off-line';
-        });
-
-        // Password Recovery Lightbox
-        const forgotPassword = document.getElementById('forgotPassword');
-        const recoveryLightbox = document.getElementById('recoveryLightbox');
-        const closeRecovery = document.getElementById('closeRecovery');
-
-        forgotPassword.addEventListener('click', (e) => {
-            e.preventDefault();
-            recoveryLightbox.classList.add('active');
-        });
-
-        closeRecovery.addEventListener('click', () => {
-            recoveryLightbox.classList.remove('active');
-        });
-
-        recoveryLightbox.addEventListener('click', (e) => {
-            if (e.target === recoveryLightbox) {
-                recoveryLightbox.classList.remove('active');
-            }
-        });
-    </script>
 </body>
 </html>

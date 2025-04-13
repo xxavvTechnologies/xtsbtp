@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Appeal - FirstLook XTS</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+        <!-- Firebase Scripts -->
+        <script type="module" src="js/firebase-config.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2>FirstLook</h2>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Submit an Appeal</h1>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="appeal-container">
+            <p class="appeal-intro">If you believe your account was suspended or banned in error, please submit an appeal below. Please provide accurate information to help us review your case.</p>
+            
+            <form id="appealForm" class="appeal-form">
+                <div class="form-group">
+                    <label for="realEmail">Your Real Email Address</label>
+                    <input type="email" id="realEmail" name="realEmail" required 
+                           placeholder="Enter your real email address">
+                </div>
+
+                <div class="form-group">
+                    <label for="xtsEmail">Your FirstLook XTS Email</label>
+                    <input type="email" id="xtsEmail" name="xtsEmail" required 
+                           placeholder="Enter your FirstLook XTS email">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">FirstLook Username</label>
+                    <input type="text" id="username" name="username" required 
+                           placeholder="Enter your FirstLook username">
+                </div>
+
+                <div class="form-group">
+                    <label for="appealType">Type of Appeal</label>
+                    <select id="appealType" name="appealType" required>
+                        <option value="">Select appeal type...</option>
+                        <option value="suspension">Suspension Appeal</option>
+                        <option value="ban">Ban Appeal</option>
+                        <option value="warning">Warning Appeal</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="previousAppeals">Have you submitted any previous appeals?</label>
+                    <select id="previousAppeals" name="previousAppeals" required>
+                        <option value="no">No, this is my first appeal</option>
+                        <option value="yes">Yes, I have appealed before</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Why should your account be restored?</label>
+                    <textarea id="reason" name="reason" required 
+                              placeholder="Please explain why you believe your suspension/ban should be reversed..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalContext">Additional Context (Optional)</label>
+                    <textarea id="additionalContext" name="additionalContext" 
+                              placeholder="Provide any additional context that might help us understand your situation better..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="evidence">Evidence (Optional)</label>
+                    <textarea id="evidence" name="evidence" 
+                              placeholder="If you have any evidence to support your appeal (such as screenshots or links), please provide them here..."></textarea>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="confirmTruth" name="confirmTruth" required>
+                        <span>I confirm that all information provided is truthful and accurate. I understand that providing false information may result in permanent account termination.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn submit-appeal">Submit Appeal</button>
+            </form>
+
+            <div class="appeal-success">
+                <h3>Appeal Submitted Successfully</h3>
+                <p>We have received your appeal and will review it as soon as possible. We'll contact you via email with our decision.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/appeal-utils.js"></script>
+</body>
+</html>

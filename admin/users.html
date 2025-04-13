@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - FirstLook Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Scripts -->
+    <script type="module" src="../js/firebase-config.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2>FirstLook Admin</h2>
+            <div>
+                <a href="index.html" class="btn">Dashboard</a>
+                <button id="signOut" class="btn">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="admin-section">
+            <h1>User Management</h1>
+            <div class="users-grid" id="usersList">
+                <!-- Users will be listed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div id="actionModal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title" id="modalTitle">Take Action</h3>
+            <div class="form-group">
+                <label for="actionMessage">Message/Reason</label>
+                <textarea id="actionMessage" required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeModal()">Cancel</button>
+                <button class="btn" id="confirmAction">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { checkAdminAuth, signOutUser } from '../js/auth-utils.js';
+        import { getAllUsers, warnUser, suspendUser, banUser } from '../js/user-management-utils.js';
+
+        let selectedUserId = null;
+        let selectedAction = null;
+
+        const renderUsers = async () => {
+            const users = await getAllUsers();
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+
+            users.forEach(user => {
+                const userEl = document.createElement('div');
+                userEl.className = 'user-card';
+                userEl.innerHTML = `
+                    <h3>${user.email || 'Unknown User'}</h3>
+                    <div class="user-stats">
+                        <span>Warnings: ${user.warnings?.length || 0}</span>
+                        <span>Suspensions: ${user.suspensions?.length || 0}</span>
+                        ${user.isBanned ? '<span class="banned">BANNED</span>' : ''}
+                    </div>
+                    <div class="user-actions">
+                        ${!user.isBanned ? `
+                            <button class="btn warning" onclick="showActionModal('${user.id}', 'warn')">Warn</button>
+                            <button class="btn suspend" onclick="showActionModal('${user.id}', 'suspend')">Suspend</button>
+                            <button class="btn danger" onclick="showActionModal('${user.id}', 'ban')">Ban</button>
+                        ` : ''}
+                    </div>
+                `;
+                usersList.appendChild(userEl);
+            });
+        };
+
+        window.showActionModal = (userId, action) => {
+            selectedUserId = userId;
+            selectedAction = action;
+            document.getElementById('modalTitle').textContent = `Confirm ${action.toUpperCase()}`;
+            document.getElementById('actionModal').style.display = 'flex';
+            document.getElementById('actionMessage').value = '';
+        };
+
+        window.closeModal = () => {
+            document.getElementById('actionModal').style.display = 'none';
+            selectedUserId = null;
+            selectedAction = null;
+        };
+
+        document.getElementById('confirmAction').addEventListener('click', async () => {
+            const message = document.getElementById('actionMessage').value;
+            if (!message) return;
+
+            try {
+                switch (selectedAction) {
+                    case 'warn':
+                        await warnUser(selectedUserId, message);
+                        break;
+                    case 'suspend':
+                        await suspendUser(selectedUserId, message);
+                        break;
+                    case 'ban':
+                        await banUser(selectedUserId, message);
+                        break;
+                }
+                closeModal();
+                renderUsers();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Initialize
+        checkAdminAuth().then(() => {
+            renderUsers();
+        }).catch(console.error);
+
+        document.getElementById('signOut').addEventListener('click', signOutUser);
+    </script>
+</body>
+</html>

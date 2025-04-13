@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Status - FirstLook</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Scripts -->
+    <script type="module" src="js/firebase-config.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2>FirstLook</h2>
+            <div>
+                <a href="dashboard.html" class="btn">Dashboard</a>
+                <button id="signOut" class="btn">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="account-status-container">
+            <h1>Account Status</h1>
+            
+            <!-- Add status messages -->
+            <div class="status-messages">
+                <div id="goodStandingMessage" class="status-message good">
+                    <h3>👍 Account in Good Standing</h3>
+                    <p>Your account is currently in good standing. Keep up the great work!</p>
+                </div>
+                <div id="warningMessage" class="status-message warning">
+                    <h3>⚠️ Account Warning</h3>
+                    <p>Your account has received a warning. Please review our guidelines to avoid further actions.</p>
+                </div>
+                <div id="suspensionMessage" class="status-message suspended">
+                    <h3>🚫 Account Suspended</h3>
+                    <p>Your account is currently suspended. Further violations may result in permanent ban.</p>
+                </div>
+            </div>
+
+            <div class="status-checklist">
+                <div class="status-item" id="warningStatus">
+                    <div class="status-indicator"></div>
+                    <div class="status-content">
+                        <h3>Warning Status</h3>
+                        <p>First strike - Warning</p>
+                        <div class="warning-messages"></div>
+                    </div>
+                </div>
+                
+                <div class="status-item" id="suspensionStatus">
+                    <div class="status-indicator"></div>
+                    <div class="status-content">
+                        <h3>Suspension Status</h3>
+                        <p>Second strike - Account Suspension</p>
+                        <div class="suspension-messages"></div>
+                    </div>
+                </div>
+                
+                <div class="status-item" id="banStatus">
+                    <div class="status-indicator"></div>
+                    <div class="status-content">
+                        <h3>Ban Status</h3>
+                        <p>Third strike - Permanent Ban</p>
+                        <div class="ban-message"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { checkAuth, signOutUser } from './js/auth-utils.js';
+        import { getUserStatus } from './js/user-status-utils.js';
+
+        let currentUser;
+
+        const updateStatusDisplay = async () => {
+            const status = await getUserStatus(currentUser.uid);
+            
+            // Update status message visibility
+            document.getElementById('goodStandingMessage').style.display = 'none';
+            document.getElementById('warningMessage').style.display = 'none';
+            document.getElementById('suspensionMessage').style.display = 'none';
+
+            if (status.suspensions?.length > 0) {
+                document.getElementById('suspensionMessage').style.display = 'block';
+            } else if (status.warnings?.length > 0) {
+                document.getElementById('warningMessage').style.display = 'block';
+            } else {
+                document.getElementById('goodStandingMessage').style.display = 'block';
+            }
+
+            // Update warning status
+            const warningEl = document.getElementById('warningStatus');
+            if (status.warnings.length > 0) {
+                warningEl.classList.add('active');
+                const messagesHtml = status.warnings.map(w => 
+                    `<div class="status-message">${w.message}<br><small>${new Date(w.date.seconds * 1000).toLocaleDateString()}</small></div>`
+                ).join('');
+                warningEl.querySelector('.warning-messages').innerHTML = messagesHtml;
+            }
+
+            // Update suspension status
+            const suspensionEl = document.getElementById('suspensionStatus');
+            if (status.suspensions.length > 0) {
+                suspensionEl.classList.add('active');
+                const messagesHtml = status.suspensions.map(s => 
+                    `<div class="status-message">${s.message}<br><small>${new Date(s.date.seconds * 1000).toLocaleDateString()}</small></div>`
+                ).join('');
+                suspensionEl.querySelector('.suspension-messages').innerHTML = messagesHtml;
+            }
+
+            // Update ban status
+            const banEl = document.getElementById('banStatus');
+            if (status.isBanned) {
+                banEl.classList.add('active');
+                banEl.querySelector('.ban-message').innerHTML = 
+                    `<div class="status-message">${status.banReason}</div>`;
+            }
+        };
+
+        // Initialize
+        checkAuth().then(user => {
+            currentUser = user;
+            updateStatusDisplay();
+        }).catch(console.error);
+
+        document.getElementById('signOut').addEventListener('click', signOutUser);
+    </script>
+</body>
+</html>

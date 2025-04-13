@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FirstLook</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Scripts -->
+    <script type="module" src="../js/firebase-config.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2>FirstLook Admin</h2>
+            <button class="btn"><a href="../dashboard.html">Back To Dashboard</a></button>
+            <button id="signOut" class="btn">Sign Out</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        
+        <div class="admin-section">
+            <div class="admin-actions">
+                <a href="appeals.html" class="btn">Review Appeals</a>
+                <a href="feedback.html" class="btn">Review Feedback</a>
+                <a href="users.html" class="btn">Manage Users</a>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <h2>Create New Sandbox</h2>
+            <form id="createSandboxForm" class="admin-form">
+                <div class="form-group">
+                    <label for="sandboxName">Sandbox Name</label>
+                    <input type="text" id="sandboxName" required>
+                </div>
+                <div class="form-group">
+                    <label for="sandboxDescription">Description</label>
+                    <textarea id="sandboxDescription" required></textarea>
+                </div>
+                <button type="submit" class="btn">Create Sandbox</button>
+            </form>
+        </div>
+
+        <div class="admin-section">
+            <h2>Existing Sandboxes</h2>
+            <div class="dashboard-grid" id="sandboxList">
+                <!-- Sandboxes will be listed here -->
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="admin-card">
+                <h3>Manage Users</h3>
+                <p>Total Users: <span id="userCount">0</span></p>
+            </div>
+            <div class="admin-card">
+                <h3>Beta Programs</h3>
+                <p>Active Programs: <span id="programCount">0</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { checkAdminAuth, signOutUser } from '../js/auth-utils.js';
+        import { createSandbox, getSandboxes } from '../js/sandbox-utils.js';
+
+        // Check admin authentication on page load
+        checkAdminAuth().catch(console.error);
+
+        // Add sign out functionality
+        document.getElementById('signOut').addEventListener('click', signOutUser);
+
+        // Handle sandbox creation
+        document.getElementById('createSandboxForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sandboxData = {
+                name: document.getElementById('sandboxName').value,
+                description: document.getElementById('sandboxDescription').value
+            };
+
+            try {
+                await createSandbox(sandboxData);
+                e.target.reset();
+                renderSandboxList();
+            } catch (error) {
+                console.error('Error creating sandbox:', error);
+            }
+        });
+
+        // Render existing sandboxes
+        const renderSandboxList = async () => {
+            const sandboxes = await getSandboxes();
+            const sandboxList = document.getElementById('sandboxList');
+            sandboxList.innerHTML = '';
+
+            sandboxes.forEach(sandbox => {
+                const sandboxEl = document.createElement('div');
+                sandboxEl.className = 'admin-card';
+                sandboxEl.innerHTML = `
+                    <h3>${sandbox.name}</h3>
+                    <p>${sandbox.description}</p>
+                    <p>Enrolled Users: ${sandbox.enrolledUsers?.length || 0}</p>
+                    <p>Status: ${sandbox.status}</p>
+                `;
+                sandboxList.appendChild(sandboxEl);
+            });
+        };
+
+        // Initial render
+        renderSandboxList();
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+    match /databases/{database}/documents {
+        // Helper functions
+        function isAuthenticated() {
+            return request.auth != null;
+        }
+        
+        function canEnrollInSandbox(sandboxId) {
+            let sandbox = get(/databases/$(database)/documents/sandboxes/$(sandboxId)).data;
+            let existingEnrollment = exists(/databases/$(database)/documents/enrollments/$(request.auth.uid + '_' + sandboxId));
+            return !existingEnrollment && sandbox.participants < sandbox.maxParticipants;
+        }
+        
+        function isAdmin() {
+            return isAuthenticated() && 
+                (request.auth.token.email == "super@xts.admin" ||
+                (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+                get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true));
+        }
+
+        function isOwner(userId) {
+            return isAuthenticated() && request.auth.uid == userId;
+        }
+
+        // Users collection
+        match /users/{userId} {
+            allow read: if isAuthenticated();
+            allow create: if isAuthenticated() && request.auth.uid == userId;
+            allow update: if isOwner(userId) || isAdmin();
+            allow delete: if isAdmin();
+        }
+
+        // Update sandboxes rules to allow participant count updates
+        match /sandboxes/{sandboxId} {
+            allow read: if isAuthenticated();
+            allow update: if isAuthenticated() && 
+                request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants']);
+            allow create, delete: if isAdmin();
+        }
+
+        // Update enrollments rules
+        match /enrollments/{enrollmentId} {
+            allow read: if isAuthenticated() && 
+                (resource.data.userId == request.auth.uid || isAdmin());
+            allow create: if isAuthenticated() &&
+                request.resource.data.userId == request.auth.uid &&
+                canEnrollInSandbox(request.resource.data.sandboxId);
+            allow update: if isAuthenticated() && 
+                (resource.data.userId == request.auth.uid || isAdmin());
+            allow delete: if isAdmin() || 
+                (isAuthenticated() && resource.data.userId == request.auth.uid);
+        }
+      
+        // Appeals collection - anyone can create, only admins can read
+        match /appeals/{appealId} {
+            allow create: if true; // Allow anyone to create an appeal
+            allow read, update, delete: if isAdmin();
+        }
+
+        // Feedback collection
+        match /feedback/{feedbackId} {
+            allow read: if isAuthenticated() && 
+                (resource.data.userId == request.auth.uid || isAdmin());
+            allow create: if isAuthenticated() &&
+                request.resource.data.userId == request.auth.uid;
+            allow update: if isAdmin();
+            allow delete: if isAdmin() ||
+                (isAuthenticated() && resource.data.userId == request.auth.uid);
+        }
+
+        // Messages collection
+        match /messages/{messageId} {
+            allow read: if isAuthenticated() && 
+                (resource.data.senderId == request.auth.uid || 
+                 resource.data.receiverId == request.auth.uid);
+            allow create: if isAuthenticated() &&
+                request.resource.data.senderId == request.auth.uid;
+            allow update: if false; // Messages cannot be edited
+            allow delete: if isAdmin();
+        }
+
+        // Notifications collection
+        match /notifications/{notificationId} {
+            allow read: if isAuthenticated() && 
+                resource.data.userId == request.auth.uid;
+            allow create: if isAdmin();
+            allow update: if isAuthenticated() && 
+                resource.data.userId == request.auth.uid;
+            allow delete: if isAdmin() ||
+                (isAuthenticated() && resource.data.userId == request.auth.uid);
+        }
+
+        // Admin access to everything
+        match /{document=**} {
+            allow read, write: if isAdmin();
+        }
+    }
+}

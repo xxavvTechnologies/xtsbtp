@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Appeals - FirstLook Admin</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Firebase Scripts -->
+    <script type="module" src="../js/firebase-config.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2>FirstLook Admin</h2>
+            <div class="nav-buttons">
+                <a href="index.html" class="btn">Dashboard</a>
+                <a href="users.html" class="btn">Users</a>
+                <a href="appeals.html" class="btn active">Appeals</a>
+                <button id="signOut" class="btn">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="appeals-container">
+            <h1>Review Appeals</h1>
+            
+            <div class="filters">
+                <select id="statusFilter">
+                    <option value="all">All Appeals</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="appeals-grid" id="appealsGrid">
+                <!-- Appeals will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Appeal Review Modal -->
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal appeal-review-modal">
+            <h3 class="modal-title">Review Appeal</h3>
+            <div class="appeal-details">
+                <!-- Appeal details will be populated here -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn reject" onclick="handleAppeal('reject')">Reject Appeal</button>
+                <button class="btn approve" onclick="handleAppeal('approve')">Approve Appeal</button>
+                <button class="btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../js/admin/appeals-admin.js"></script>
+</body>
+</html>
